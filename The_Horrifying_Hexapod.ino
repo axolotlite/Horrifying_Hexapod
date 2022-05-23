@@ -15,7 +15,8 @@ void setup(){
     currentMillis = 0;
     prevMillis = 0;
     startNextMotion(&legRaise);
-    Serial.println(legRaise.start[0].x);
+    // Serial.println(legRaise.start[0].x);
+    // Serial.println("New data is in.");
 }
 
 void loop(){

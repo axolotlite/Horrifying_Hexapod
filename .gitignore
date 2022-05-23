@@ -1,4 +1,8 @@
 Hexapod.code-workspace
-
 Sequence.cpp
 Sequences.h
+.constants.h
+.Inver_kinematics_test.ino
+.Leg.cpp
+.structs.h
+Headers.h
