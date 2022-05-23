@@ -38,13 +38,13 @@ static unsigned char increment = 1;
 static Adafruit_PWMServoDriver PWM_Driver = Adafruit_PWMServoDriver(0x40);
 
 //The legs
-static LIMB leg1= {initialPoint,DEFAULT_COXA(13),DEFAULT_FEMUR(14),DEFAULT_TIBIA(15)};
-static LIMB leg2= {initialPoint,DEFAULT_COXA(10),DEFAULT_FEMUR(11),DEFAULT_TIBIA(12)};
-static LIMB leg3= {initialPoint,DEFAULT_COXA(7),DEFAULT_FEMUR(8),DEFAULT_TIBIA(9)};
-static LIMB leg4= {initialPoint,DEFAULT_COXA(4),DEFAULT_FEMUR(5),DEFAULT_TIBIA(6)};
-static LIMB leg5= {initialPoint,DEFAULT_COXA(1),DEFAULT_FEMUR(2),DEFAULT_TIBIA(3)};
-static LIMB leg6= {initialPoint,DEFAULT_COXA(A1),DEFAULT_FEMUR(A0),DEFAULT_TIBIA(0)};
-static LIMB legs[6] = {leg1, leg2, leg3, leg4, leg5, leg6};
+static LIMB leg1 = {initialPoint,DEFAULT_COXA(13),DEFAULT_FEMUR(14),DEFAULT_TIBIA(15)};
+static LIMB leg2 = {initialPoint,DEFAULT_COXA(10),DEFAULT_FEMUR(11),DEFAULT_TIBIA(12)};
+static LIMB leg3 = {initialPoint,DEFAULT_COXA(7),DEFAULT_FEMUR(8),DEFAULT_TIBIA(9)};
+static LIMB leg4 = {initialPoint,DEFAULT_COXA(4),DEFAULT_FEMUR(5),DEFAULT_TIBIA(6)};
+static LIMB leg5 = {initialPoint,DEFAULT_COXA(1),DEFAULT_FEMUR(2),DEFAULT_TIBIA(3)};
+static LIMB leg6 = {initialPoint,DEFAULT_COXA(A1),DEFAULT_FEMUR(A0),DEFAULT_TIBIA(0)};
+static LIMB *legs[6] = {&leg1, &leg2, &leg3, &leg4, &leg5, &leg6};
 static Servo leg6Coxa;
 static Servo leg6Femur;
 
@@ -87,29 +87,37 @@ static void updateAngles(){
     leg6Coxa.write(leg6.coxa.angle);
     leg6Femur.write(leg6.femur.angle);
     PWM_Driver.writeMicroseconds(leg6.tibia.pin,PWM_2_DEGREE(leg6.tibia.angle));
+    if(updateAnglesFlag){
+        Serial.print("leg1: ");Serial.print(leg1.coxa.angle);Serial.print(", ");Serial.print(leg1.femur.angle);Serial.print(", ");Serial.println(leg1.tibia.angle);
+        Serial.print("leg2: ");Serial.print(leg2.coxa.angle);Serial.print(", ");Serial.print(leg2.femur.angle);Serial.print(", ");Serial.println(leg2.tibia.angle);
+        Serial.print("leg3: ");Serial.print(leg3.coxa.angle);Serial.print(", ");Serial.print(leg3.femur.angle);Serial.print(", ");Serial.println(leg3.tibia.angle);
+        Serial.print("leg4: ");Serial.print(leg4.coxa.angle);Serial.print(", ");Serial.print(leg4.femur.angle);Serial.print(", ");Serial.println(leg4.tibia.angle);
+        Serial.print("leg5: ");Serial.print(leg5.coxa.angle);Serial.print(", ");Serial.print(leg5.femur.angle);Serial.print(", ");Serial.println(leg5.tibia.angle);
+        Serial.print("leg6: ");Serial.print(leg6.coxa.angle);Serial.print(", ");Serial.print(leg6.femur.angle);Serial.print(", ");Serial.println(leg6.tibia.angle);
+    }
 }
 static bool legInverseKinematics(){
-    float coxa_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg].coxa.zero_rotate);
-    float femur_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg].femur.zero_rotate);
-    float tibia_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg].tibia.zero_rotate);
-    float x1 = legs[currentLeg].point.x * cosf(coxa_zero_rotate_deg) + legs[currentLeg].point.z * sinf(coxa_zero_rotate_deg);
-    float y1 = legs[currentLeg].point.y;
-    float z1 = -legs[currentLeg].point.x * sinf(coxa_zero_rotate_deg) + legs[currentLeg].point.z * cosf(coxa_zero_rotate_deg);
+    float coxa_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->coxa.zero_rotate);
+    float femur_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->femur.zero_rotate);
+    float tibia_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->tibia.zero_rotate);
+    float x1 = legs[currentLeg]->point.x * cosf(coxa_zero_rotate_deg) + legs[currentLeg]->point.z * sinf(coxa_zero_rotate_deg);
+    float y1 = legs[currentLeg]->point.y;
+    float z1 = -legs[currentLeg]->point.x * sinf(coxa_zero_rotate_deg) + legs[currentLeg]->point.z * cosf(coxa_zero_rotate_deg);
     if(legInverseKinematicsSecondDebugFlag){
         Serial.println("[Leg IK Data]Leg positions");
-        Serial.print("x = ");Serial.println(legs[currentLeg].point.x);
-        Serial.print("y= ");Serial.println(legs[currentLeg].point.y);
-        Serial.print("z = ");Serial.println(legs[currentLeg].point.z);
+        Serial.print("x = ");Serial.println(legs[currentLeg]->point.x);
+        Serial.print("y= ");Serial.println(legs[currentLeg]->point.y);
+        Serial.print("z = ");Serial.println(legs[currentLeg]->point.z);
         Serial.println("[Leg IK Data]End");
     }
     //may return a negative value.
     float new_coxa_angle_rad = atan2f(z1,x1);
 //    Serial.print("new coxa angle");
 //    Serial.println(new_coxa_angle_rad);
-    legs[currentLeg].coxa.angle = RAD_TO_DEG(new_coxa_angle_rad);
+    legs[currentLeg]->coxa.angle = RAD_TO_DEG(new_coxa_angle_rad);
     x1 = x1 * cosf(new_coxa_angle_rad) + z1 * sinf(new_coxa_angle_rad);
     // std::cout << "x1 = " << x1 << '\n';
-    x1 = x1 - COXA_LENGTH;//legs[currentLeg].coxa.length;
+    x1 = x1 - COXA_LENGTH;//legs[currentLeg]->coxa.length;
     // std::cout << "x1 = " << x1 << '\n';
 
     float fi = atan2f(y1,x1);
@@ -122,42 +130,42 @@ static bool legInverseKinematics(){
     float alpha = acosf((FEMUR_LENGTH_SQUARED + distance * distance - TIBIA_LENGTH_SQUARED) / (2.0f * FEMUR_LENGTH * distance));
     float gamma = acosf(( TIBIA_LENGTH_SQUARED + FEMUR_LENGTH_SQUARED - distance * distance)/(2.0f * FEMUR_LENGTH * TIBIA_LENGTH));
 
-    legs[currentLeg].femur.angle = legs[currentLeg].femur.zero_rotate - RAD_TO_DEG(alpha) - RAD_TO_DEG(fi);
+    legs[currentLeg]->femur.angle = legs[currentLeg]->femur.zero_rotate - RAD_TO_DEG(alpha) - RAD_TO_DEG(fi);
 
     //***********IMPORTANT NOTE*************//
     //not subtracting the tibia zero rotation makes this equation work...
     //TODO actually test that shit
-    legs[currentLeg].tibia.angle = RAD_TO_DEG(gamma); //- legs[currentLeg].tibia.zero_rotate;
+    legs[currentLeg]->tibia.angle = RAD_TO_DEG(gamma); //- legs[currentLeg]->tibia.zero_rotate;
 
-    legs[currentLeg].coxa.angle =round(fabs(legs[currentLeg].coxa.angle));
-    legs[currentLeg].femur.angle = round(legs[currentLeg].femur.angle);
-    legs[currentLeg].tibia.angle = round(legs[currentLeg].tibia.angle);
+    legs[currentLeg]->coxa.angle =round(fabs(legs[currentLeg]->coxa.angle));
+    legs[currentLeg]->femur.angle = round(legs[currentLeg]->femur.angle);
+    legs[currentLeg]->tibia.angle = round(legs[currentLeg]->tibia.angle);
     if(legInverseKinematicsSecondDebugFlag){
         Serial.println("[Leg IK Data]Angle pre-safety measure");
-        Serial.print("coxa = ");Serial.println(legs[currentLeg].coxa.angle);
-        Serial.print(", femur = ");Serial.println(legs[currentLeg].femur.angle);
-        Serial.print(", tibia = ");Serial.println(legs[currentLeg].tibia.angle);
+        Serial.print("coxa = ");Serial.println(legs[currentLeg]->coxa.angle);
+        Serial.print(", femur = ");Serial.println(legs[currentLeg]->femur.angle);
+        Serial.print(", tibia = ");Serial.println(legs[currentLeg]->tibia.angle);
         Serial.println("[Leg IK Data]End");
    }
     
     //make sure they don't exceed the maximum nor minimum angle
-    if (legs[currentLeg].coxa.angle < legs[currentLeg].coxa.min_angle) {
-        legs[currentLeg].coxa.angle = legs[currentLeg].coxa.min_angle;
+    if (legs[currentLeg]->coxa.angle < legs[currentLeg]->coxa.min_angle) {
+        legs[currentLeg]->coxa.angle = legs[currentLeg]->coxa.min_angle;
     }
-    if (legs[currentLeg].coxa.angle > legs[currentLeg].coxa.max_angle) {
-        legs[currentLeg].coxa.angle  = legs[currentLeg].coxa.max_angle;
+    if (legs[currentLeg]->coxa.angle > legs[currentLeg]->coxa.max_angle) {
+        legs[currentLeg]->coxa.angle  = legs[currentLeg]->coxa.max_angle;
     }
-    if (legs[currentLeg].femur.angle < legs[currentLeg].femur.min_angle) {
-        legs[currentLeg].femur.angle = legs[currentLeg].femur.min_angle;
+    if (legs[currentLeg]->femur.angle < legs[currentLeg]->femur.min_angle) {
+        legs[currentLeg]->femur.angle = legs[currentLeg]->femur.min_angle;
     }
-    if (legs[currentLeg].femur.angle > legs[currentLeg].femur.max_angle) {
-        legs[currentLeg].femur.angle = legs[currentLeg].femur.max_angle;
+    if (legs[currentLeg]->femur.angle > legs[currentLeg]->femur.max_angle) {
+        legs[currentLeg]->femur.angle = legs[currentLeg]->femur.max_angle;
     }
-    if (legs[currentLeg].tibia.angle < legs[currentLeg].tibia.min_angle) {
-        legs[currentLeg].tibia.angle = legs[currentLeg].tibia.min_angle;
+    if (legs[currentLeg]->tibia.angle < legs[currentLeg]->tibia.min_angle) {
+        legs[currentLeg]->tibia.angle = legs[currentLeg]->tibia.min_angle;
     }
-    if (legs[currentLeg].tibia.angle > legs[currentLeg].tibia.max_angle) {
-        legs[currentLeg].tibia.angle = legs[currentLeg].tibia.max_angle;
+    if (legs[currentLeg]->tibia.angle > legs[currentLeg]->tibia.max_angle) {
+        legs[currentLeg]->tibia.angle = legs[currentLeg]->tibia.max_angle;
     }
 //    Serial.println("angles");
     
@@ -167,9 +175,9 @@ static bool legInverseKinematics(){
         Serial.print("target y: ");Serial.println(y1);
         Serial.print("target z: ");Serial.println(z1);
         Serial.println("[Leg IK Data]Angle post-safety measure");
-        Serial.print("coxa = ");Serial.println(legs[currentLeg].coxa.angle);
-        Serial.print("femur = ");Serial.println(legs[currentLeg].femur.angle);
-        Serial.print("tibia = ");Serial.println(legs[currentLeg].tibia.angle);
+        Serial.print("coxa = ");Serial.println(legs[currentLeg]->coxa.angle);
+        Serial.print("femur = ");Serial.println(legs[currentLeg]->femur.angle);
+        Serial.print("tibia = ");Serial.println(legs[currentLeg]->tibia.angle);
         Serial.println("[Leg IK Data]End");
     }
 
@@ -184,18 +192,18 @@ static bool linearTrajectory() {
     float y1 = currentMotion.destination[currentLeg].y;
     float z1 = currentMotion.destination[currentLeg].z;
     
-    legs[currentLeg].point.x = x0 + motionPercentage * (x1 - x0);
-    legs[currentLeg].point.y = y0 + motionPercentage * (y1 - y0);
-    legs[currentLeg].point.z = z0 + motionPercentage * (z1 - z0);
+    legs[currentLeg]->point.x = x0 + motionPercentage * (x1 - x0);
+    legs[currentLeg]->point.y = y0 + motionPercentage * (y1 - y0);
+    legs[currentLeg]->point.z = z0 + motionPercentage * (z1 - z0);
     if(linearTrajectoryFlag){
         Serial.println("[Linear Motion info]Begin");
-        Serial.print("x = ");Serial.println(legs[currentLeg].point.x);
-        Serial.print("y = ");Serial.println(legs[currentLeg].point.y);
-        Serial.print("z = ");Serial.println(legs[currentLeg].point.z);
+        Serial.print("x = ");Serial.println(legs[currentLeg]->point.x);
+        Serial.print("y = ");Serial.println(legs[currentLeg]->point.y);
+        Serial.print("z = ");Serial.println(legs[currentLeg]->point.z);
         Serial.println("[Linear Motion info]End");
     }
 
-    //    std::cout << "x = " << legs[currentLeg].point.x << ", y = " << legs[currentLeg].point.y << " , z = " << legs[currentLeg].point.z << '\n';
+    //    std::cout << "x = " << legs[currentLeg]->point.x << ", y = " << legs[currentLeg]->point.y << " , z = " << legs[currentLeg]->point.z << '\n';
     
     return false;
 }
@@ -213,23 +221,23 @@ static bool arcTrajectory(float arc) {
     float atan1 = RAD_TO_DEG(atan2(x1, z1));
     float t_mapped_rad = DEG_TO_RAD(motionPercentage * (atan1 - atan0) + atan0);
     
-    legs[currentLeg].point.x = r * sin(t_mapped_rad); 
-    legs[currentLeg].point.y = y0 + arc * r * sin(DEG_TO_RAD(180 * motionPercentage ));
-    legs[currentLeg].point.z = r * cos(t_mapped_rad);
+    legs[currentLeg]->point.x = r * sin(t_mapped_rad); 
+    legs[currentLeg]->point.y = y0 + arc * r * sin(DEG_TO_RAD(180 * motionPercentage ));
+    legs[currentLeg]->point.z = r * cos(t_mapped_rad);
 
-//    legs[currentLeg].point.x = x0 + motion->motionTime * (x1 - x0);
-//    legs[currentLeg].point.y = y0 + motion->motionTime * (y1 - y0);
-//    legs[currentLeg].point.z = z0 + motion->motionTime * (z1 - z0);
+//    legs[currentLeg]->point.x = x0 + motion->motionTime * (x1 - x0);
+//    legs[currentLeg]->point.y = y0 + motion->motionTime * (y1 - y0);
+//    legs[currentLeg]->point.z = z0 + motion->motionTime * (z1 - z0);
 
     if(arcTrajectoryFlag){
         Serial.println("[Arc Motion info]Begin");
-        Serial.print("x = ");Serial.println(legs[currentLeg].point.x);
-        Serial.print("y = ");Serial.println(legs[currentLeg].point.y);
-        Serial.print("z = ");Serial.println(legs[currentLeg].point.z);
+        Serial.print("x = ");Serial.println(legs[currentLeg]->point.x);
+        Serial.print("y = ");Serial.println(legs[currentLeg]->point.y);
+        Serial.print("z = ");Serial.println(legs[currentLeg]->point.z);
         Serial.println("[Arc Motion info]End");
     }
 
-    //    std::cout << "x = " << legs[currentLeg].point.x << ", y = " << legs[currentLeg].point.y << " , z = " << legs[currentLeg].point.z << '\n';
+    //    std::cout << "x = " << legs[currentLeg]->point.x << ", y = " << legs[currentLeg]->point.y << " , z = " << legs[currentLeg]->point.z << '\n';
     
     return false;
 }
@@ -247,15 +255,15 @@ static bool elipticalTrajectory() {
     float b = (x1 - x0);
     float c = (y1 - y0);
 
-    legs[currentLeg].point.x = b * sin(DEG_TO_RAD(180.0f - 90 * motionPercentage )) + x0;
-    legs[currentLeg].point.y = c * sin(DEG_TO_RAD(90 * motionPercentage )) + y0;
-    legs[currentLeg].point.z = a * cos(DEG_TO_RAD(180.0f - 90 * motionPercentage )) + z0 + a;
+    legs[currentLeg]->point.x = b * sin(DEG_TO_RAD(180.0f - 90 * motionPercentage )) + x0;
+    legs[currentLeg]->point.y = c * sin(DEG_TO_RAD(90 * motionPercentage )) + y0;
+    legs[currentLeg]->point.z = a * cos(DEG_TO_RAD(180.0f - 90 * motionPercentage )) + z0 + a;
 
     if(elipticalTrajectoryFlag){
         Serial.println("[Eliptical Motion info]Begin");
-        Serial.print("x = ");Serial.println(legs[currentLeg].point.x);
-        Serial.print("y = ");Serial.println(legs[currentLeg].point.y);
-        Serial.print("z = ");Serial.println(legs[currentLeg].point.z);
+        Serial.print("x = ");Serial.println(legs[currentLeg]->point.x);
+        Serial.print("y = ");Serial.println(legs[currentLeg]->point.y);
+        Serial.print("z = ");Serial.println(legs[currentLeg]->point.z);
         Serial.println("[Eliptical Motion info]End");
     }
 //    
