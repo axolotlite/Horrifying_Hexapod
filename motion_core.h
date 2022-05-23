@@ -73,6 +73,14 @@ const static MOTION legRaise = {
     10,
     false
 };
+//prevents hexapod from moving
+const static MOTION bufferMotion = {
+    {0}, //all legs start at the initial position
+    {0}, //all legs end at the initial position except leg 1
+    {NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY},
+    10,
+    false
+};
 
 //default configs for each link type, will be later removed
 #define DEFAULT_COXA(pin) {90,90, COXA_MIN, COXA_MAX,pin}

@@ -6,3 +6,5 @@ Sequences.h
 .Leg.cpp
 .structs.h
 Headers.h
+point.h
+limbs.h

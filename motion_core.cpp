@@ -31,7 +31,7 @@ static MOTION currentMotion = {0};
 static unsigned char currentLeg = 0;
 static bool motionComplete = true;
 //can be modified later
-static float motionPercentage = -0.01;
+static float motionPercentage = 0;
 static unsigned char increment = 1;
 
 //The servo driver
@@ -185,23 +185,30 @@ static bool legInverseKinematics(){
 }
 
 static bool linearTrajectory() {
-    float x0 = currentMotion.start[currentLeg].x;
-    float y0 = currentMotion.start[currentLeg].y;
-    float z0 = currentMotion.start[currentLeg].z;
-    float x1 = currentMotion.destination[currentLeg].x;
-    float y1 = currentMotion.destination[currentLeg].y;
-    float z1 = currentMotion.destination[currentLeg].z;
-    
+    short int x0 = currentMotion.start[currentLeg].x;
+    short int y0 = currentMotion.start[currentLeg].y;
+    short int z0 = currentMotion.start[currentLeg].z;
+    short int x1 = currentMotion.destination[currentLeg].x;
+    short int y1 = currentMotion.destination[currentLeg].y;
+    short int z1 = currentMotion.destination[currentLeg].z;
+
     legs[currentLeg]->point.x = x0 + motionPercentage * (x1 - x0);
     legs[currentLeg]->point.y = y0 + motionPercentage * (y1 - y0);
     legs[currentLeg]->point.z = z0 + motionPercentage * (z1 - z0);
+    
     if(linearTrajectoryFlag){
         Serial.println("[Linear Motion info]Begin");
+
         Serial.print("x = ");Serial.println(legs[currentLeg]->point.x);
         Serial.print("y = ");Serial.println(legs[currentLeg]->point.y);
         Serial.print("z = ");Serial.println(legs[currentLeg]->point.z);
+
         Serial.println("[Linear Motion info]End");
     }
+
+    
+    
+    
 
     //    std::cout << "x = " << legs[currentLeg]->point.x << ", y = " << legs[currentLeg]->point.y << " , z = " << legs[currentLeg]->point.z << '\n';
     
@@ -284,36 +291,36 @@ static void motionProcess(){
 
     //checks the motion to see if its done or not.
     if(!currentMotion.isDone){
-
-        motionPercentage += 0.01;
+//      This can't ever be here
+        motionPercentage += 0.05;
 
         for(currentLeg = 0; currentLeg < 6; currentLeg++){
             switch(currentMotion.trajectory[currentLeg]){
                 case NONE_TRAJECTORY:continue;
                 //get leg from one point to the next in a straight line, works on xz axis
-                case LINEAR_TRAJECTORY:linearTrajectory();break;
+                case LINEAR_TRAJECTORY:if(linearTrajectory())continue; break;
                 //rotate according to the coxa, works without changing the y-axis
-                case LINEAR_ARC_TRAJECTORY:arcTrajectory(0);break;
+                case LINEAR_ARC_TRAJECTORY:if(arcTrajectory(0))continue ; break;
                 //rotate according to the coxa, while changing/raising the y-axis
-                case ARC_TRAJECTORY:arcTrajectory(0.25);break;
+                case ARC_TRAJECTORY:if(arcTrajectory(0.25))continue; break;
                 //moves leg from one point to the next in an elipse, works on xz axis
-                case ELIPTICAL_TRAJECTORY:elipticalTrajectory();
+                case ELIPTICAL_TRAJECTORY:if(elipticalTrajectory()) continue ; break;
                 //some bug is causing it to default.
                 default:break;
             }
-            if(legInverseKinematics())
-                updateAngles();
-            else
+            if(!legInverseKinematics())
                 Serial.println("[Inverse Kinematics Error]Point out of reach, failing to calculate angles");
-            
+            //this is proof that i'm mentally retarded
+            // motionPercentage += 0.01;
             //if the motion is greater than 100 then it's done
-            if(motionPercentage > 1){
+            
+        }
+        updateAngles();
+        if(motionPercentage >= 1){
                 Serial.print("percentage = ");Serial.println(motionPercentage);
                 currentMotion.isDone = true;
                 motionPercentage = 0;
             }
-        }
-
     }
 
 }

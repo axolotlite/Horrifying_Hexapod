@@ -1,4 +1,4 @@
-#include <arduino-timer.h>
+// #include <arduino-timer.h>
 #include "motion_core.cpp"
 
 static unsigned long prevMillis;
