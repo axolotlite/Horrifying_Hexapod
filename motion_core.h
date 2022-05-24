@@ -1,20 +1,32 @@
 #ifndef _MOTION_CORE_
 #define _MOTION_CORE_
-
+#include <math.h>
 // #include "constants.h"
 #define LIMB_COUNT 6
 
-#define COXA_LENGTH 26
-#define COXA_LENGTH_SQUARED 676
-#define FEMUR_LENGTH 40
-#define FEMUR_LENGTH_SQUARED 1600
-#define TIBIA_LENGTH 80
-#define TIBIA_LENGTH_SQUARED 6400
-#define FEMUR_COXA_SUM 66
+#define COXA_LENGTH (unsigned char) 26
+#define COXA_LENGTH_SQUARED (short int) 676
+#define FEMUR_LENGTH (unsigned char) 40
+#define FEMUR_LENGTH_SQUARED (short int) 1600
+#define TIBIA_LENGTH (unsigned char) 80
+#define TIBIA_LENGTH_SQUARED (short int) 6400
+
+#define FEMUR_COXA_SUM (unsigned char) 66
+#define FEMUR_COXA_DIFF (unsigned char) 14
 
 // min and max angles of each leg
-#define COXA_MIN 25
-#define COXA_MAX 165
+#define COXA_MIN (unsigned char) 25
+#define COXA_MAX (short int) 165
+
+#define M_PI                                (3.14159265f)
+#define RAD_TO_DEG(rad)                     ((rad) * 180.0f / M_PI)
+#define DEG_TO_RAD(deg)                     ((deg) * M_PI / 180.0f)
+
+//need further testing because tan returns different point from the calculated z
+// #define maxZUP (short int )round(FEMUR_COXA_SUM * RAD_TO_DEG(tanf(90 - COXA_MIN)))
+#define maxZUP (short int) 142
+#define maxZDown -maxZUP
+
 
 //the 3d point
 typedef struct {
@@ -51,14 +63,34 @@ static void startNextMotion(MOTION* nextMotion);
 static void motionProcess();
 //some defaults point, will need to further expand the point system for motion critical points
 const static POINT initialPoint = {
-    COXA_LENGTH + FEMUR_LENGTH,
+    FEMUR_COXA_SUM,
     -TIBIA_LENGTH,
     0
 };
 const static POINT idlePoint = {
-    COXA_LENGTH + FEMUR_LENGTH,
+    FEMUR_COXA_SUM,
     -TIBIA_LENGTH,
     -20
+};
+const static POINT maxUp = {
+    FEMUR_COXA_SUM,
+    -TIBIA_LENGTH,
+    maxZUP
+};
+const static POINT halfUP = {
+    FEMUR_COXA_SUM,
+    -TIBIA_LENGTH,
+    maxZUP/2 + 5
+};
+const static POINT maxDown = {
+    FEMUR_COXA_SUM,
+    -TIBIA_LENGTH,
+    -maxZDown
+};
+const static POINT halfDown = {
+    FEMUR_COXA_SUM,
+    -TIBIA_LENGTH,
+    -maxZDown/2 - 5
 };
 const static POINT legOutstretshed = {
     COXA_LENGTH + FEMUR_LENGTH + TIBIA_LENGTH,
@@ -70,6 +102,13 @@ const static MOTION legRaise = {
     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
     {legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed}, //all legs end at the initial position except leg 1
     {LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY},
+    10,
+    false
+};
+const static MOTION debugMotion = {
+    {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
+    {halfUP,halfDown,halfUP,halfDown,halfUP,halfDown,},
+    {LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY},
     10,
     false
 };

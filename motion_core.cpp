@@ -1,4 +1,4 @@
-#include <math.h>
+// #include <math.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Servo.h>
 #include "debug.h"
@@ -6,9 +6,7 @@
 #include "servo_driver_configs.h"
 //  #include "Leg.cpp"
 
-#define M_PI                                (3.14159265f)
-#define RAD_TO_DEG(rad)                     ((rad) * 180.0f / M_PI)
-#define DEG_TO_RAD(deg)                     ((deg) * M_PI / 180.0f)
+
 
 typedef struct{
     float angle;
@@ -60,6 +58,7 @@ static void motionCoreInit(){
     // delay(10);
     // leg6.attach();
 }
+
 static void updateAngles(){
     
     PWM_Driver.writeMicroseconds(leg1.coxa.pin,PWM_2_DEGREE(leg1.coxa.angle));
@@ -82,8 +81,6 @@ static void updateAngles(){
     PWM_Driver.writeMicroseconds(leg5.femur.pin,PWM_2_DEGREE(leg5.femur.angle));
     PWM_Driver.writeMicroseconds(leg5.tibia.pin,PWM_2_DEGREE(leg5.tibia.angle));
 
-    //   PWM_Driver.writeMicroseconds(leg6.coxa.pin,PWM_2_DEGREE(leg6.coxa.angle));
-    //   PWM_Driver.writeMicroseconds(leg6.femur.pin,PWM_2_DEGREE(leg6.femur.angle));
     leg6Coxa.write(leg6.coxa.angle);
     leg6Femur.write(leg6.femur.angle);
     PWM_Driver.writeMicroseconds(leg6.tibia.pin,PWM_2_DEGREE(leg6.tibia.angle));
@@ -96,6 +93,7 @@ static void updateAngles(){
         Serial.print("leg6: ");Serial.print(leg6.coxa.angle);Serial.print(", ");Serial.print(leg6.femur.angle);Serial.print(", ");Serial.println(leg6.tibia.angle);
     }
 }
+
 static bool legInverseKinematics(){
     float coxa_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->coxa.zero_rotate);
     float femur_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->femur.zero_rotate);
@@ -106,7 +104,7 @@ static bool legInverseKinematics(){
     if(legInverseKinematicsSecondDebugFlag){
         Serial.println("[Leg IK Data]Leg positions");
         Serial.print("x = ");Serial.println(legs[currentLeg]->point.x);
-        Serial.print("y= ");Serial.println(legs[currentLeg]->point.y);
+        Serial.print("y = ");Serial.println(legs[currentLeg]->point.y);
         Serial.print("z = ");Serial.println(legs[currentLeg]->point.z);
         Serial.println("[Leg IK Data]End");
     }
@@ -121,18 +119,18 @@ static bool legInverseKinematics(){
     // std::cout << "x1 = " << x1 << '\n';
 
     float fi = atan2f(y1,x1);
-
+    //need to check if this shit fucks any other shit up, nigger.
     float distance = sqrt( x1 * x1 + y1 * y1);
-    if(distance < FEMUR_COXA_SUM ){
+    if(distance < FEMUR_COXA_SUM){
         return false;
     }
     
     float alpha = acosf((FEMUR_LENGTH_SQUARED + distance * distance - TIBIA_LENGTH_SQUARED) / (2.0f * FEMUR_LENGTH * distance));
-    float gamma = acosf(( TIBIA_LENGTH_SQUARED + FEMUR_LENGTH_SQUARED - distance * distance)/(2.0f * FEMUR_LENGTH * TIBIA_LENGTH));
+    float gamma = acosf((TIBIA_LENGTH_SQUARED + FEMUR_LENGTH_SQUARED - distance * distance)/(2.0f * FEMUR_LENGTH * TIBIA_LENGTH));
 
     legs[currentLeg]->femur.angle = legs[currentLeg]->femur.zero_rotate - RAD_TO_DEG(alpha) - RAD_TO_DEG(fi);
 
-    //***********IMPORTANT NOTE*************//
+    //****IMPORTANT NOTE****//
     //not subtracting the tibia zero rotation makes this equation work...
     //TODO actually test that shit
     legs[currentLeg]->tibia.angle = RAD_TO_DEG(gamma); //- legs[currentLeg]->tibia.zero_rotate;

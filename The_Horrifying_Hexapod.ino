@@ -14,9 +14,12 @@ void setup(){
     //variable definitions
     currentMillis = 0;
     prevMillis = 0;
-    startNextMotion(&legRaise);
+    // startNextMotion(&legRaise);
+    startNextMotion(&debugMotion);
     // Serial.println(legRaise.start[0].x);
     // Serial.println("New data is in.");
+    // Serial.print("tanf(90 - COXA_MIN = "); Serial.println(RAD_TO_DEG(tanf(90 - COXA_MIN)));
+    // Serial.print("max Z  up: ");Serial.println(maxZUP);
 }
 
 void loop(){

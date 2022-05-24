@@ -5,8 +5,9 @@
 static bool legInverseKinematicsFirstDebugFlag = false;
 static bool legInverseKinematicsSecondDebugFlag = false;
 static bool linearTrajectoryFlag = false;
-static bool arcTrajectoryFlag = false;
+static bool arcTrajectoryFlag = true;
 static bool elipticalTrajectoryFlag = false;
 static bool motionProcessFlag = false;
 static bool updateAnglesFlag = true;
+
 #endif
