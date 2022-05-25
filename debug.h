@@ -4,9 +4,9 @@
 //These flags determine wether serial prints are compiled or ignored during upload
 
 //motion core debug flags
-static bool legInverseKinematicsFirstDebugFlag = false;
+static bool legInverseKinematicsFirstDebugFlag = true;
 static bool legInverseKinematicsSecondDebugFlag = false;
-static bool linearTrajectoryFlag = false;
+static bool linearTrajectoryFlag = true;
 static bool arcTrajectoryFlag = false;
 static bool elipticalTrajectoryFlag = false;
 static bool motionProcessFlag = false;

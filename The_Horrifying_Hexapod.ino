@@ -15,9 +15,9 @@ void setup(){
     //variable definitions
     currentMillis = 0;
     prevMillis = 0;
-    sequenceSelector(ROTATE_RIGHT_SEQUENCE);
+    // sequenceSelector(ROTATE_RIGHT_SEQUENCE);
+    startNextMotion(&initializingMotion);
     // startNextMotion(&legRaise);
-    // startNextMotion(&debugMotion);
     // Serial.println(legRaise.start[0].x);
     // Serial.println("New data is in.");
     // Serial.print("tanf(90 - COXA_MIN = "); Serial.println(RAD_TO_DEG(tanf(90 - COXA_MIN)));
@@ -26,7 +26,7 @@ void setup(){
 
 void loop(){
     if(currentMillis - prevMillis >=20){
-        sequenceEngine();
+        // sequenceEngine();
         motionProcess();
         prevMillis = currentMillis;
     }

@@ -122,7 +122,9 @@ static bool legInverseKinematics(){
     float fi = atan2f(y1,x1);
     //need to check if this shit fucks any other shit up, nigger.
     float distance = sqrt( x1 * x1 + y1 * y1);
-    if(distance < FEMUR_COXA_SUM){
+    if(distance > FEMUR_TIBIA_SUM){
+        // Serial.println(FEMUR_COXA_SUM);
+        // Serial.print("point: ");Serial.print(x1);Serial.print(", ");Serial.print(y1);Serial.print(", ");Serial.print(z1);Serial.print(", ");
         return false;
     }
     
