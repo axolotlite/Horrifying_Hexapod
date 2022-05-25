@@ -28,7 +28,7 @@ typedef struct {
 
 static MOTION currentMotion = {0};
 static unsigned char currentLeg = 0;
-static bool motionComplete = true;
+static bool motionComplete = false;
 //can be modified later
 static float motionPercentage = 0;
 static unsigned char increment = 1;
@@ -277,7 +277,9 @@ static bool elipticalTrajectory() {
     return false;
 }
 
-
+static bool checkMotionCompletion(){
+    return motionComplete;
+}
 static void startNextMotion(MOTION* nextMotion){
     currentMotion = *nextMotion;
 //    Serial.println(nextMotion->start[0].y);
@@ -289,7 +291,7 @@ static void motionProcess(){
     //sensor data goes here
 
     //checks the motion to see if its done or not.
-    if(!currentMotion.isDone){
+    if(!motionComplete){
 //      This can't ever be here
         motionPercentage += 0.05;
 
@@ -318,10 +320,11 @@ static void motionProcess(){
         if(motionPercentage >= 1){
                 Serial.print("percentage = ");Serial.println(motionPercentage);
                 //remove the boolean from the motion and make it a local variable
-                currentMotion.isDone = true;
+                motionComplete = true;
 
                 motionPercentage = 0;
             }
     }
 
 }
+

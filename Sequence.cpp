@@ -14,7 +14,7 @@ static ENGINE_STATE currentState = IDLE_STATE;
 static SEQUENCE_ID currentID;
 static SEQUENCE currentSequence = idleSeq;
 static SEQUENCE_ID nextID;
-static SEQUENCE nextSequence = idleSeq;
+// static SEQUENCE nextSequence = idleSeq;
 
 //debug transition states, won't be used if the flag is set to false
 static ENGINE_STATE transitions[SUPPORTED_TRANSITION_COUNT];
@@ -23,14 +23,18 @@ static unsigned char transitionCount = 0;
 static unsigned char motionCount = 0;
 static void sequenceEngineInit(){
     currentSequence = idleSeq;
-    nextSequence = idleSeq;
+    currentState = IDLE_STATE;
+    currentID = NONE_SEQUENCE;
+    nextID = NONE_SEQUENCE;
+    // nextSequence = idleSeq;
 
 }
 //resets motions in case they'll be reused later
-static void resetSequence(){
-    for(int i=0;i<currentSequence.motionsCount ;i++)
-        currentSequence.motions[i].isDone = false;
-}
+//depricated
+// static void resetSequence(){
+//     for(int i=0;i<currentSequence.motionsCount ;i++)
+//         checkMotionCompletion() = false;
+// }
 //needs a shit ton of debugging and debugging flags.
 static void sequenceEngine(){
     //needs some debugging flags
@@ -52,7 +56,7 @@ static void sequenceEngine(){
             break;
         //to be implemented later
         case WAIT_STATE:
-            if(currentSequence.motions[motionCount].isDone){
+            if(checkMotionCompletion()){
                 currentState = CHANGE_MOTION_STATE;
                 //wait for one second 
                 if(motionTransitionDelayFlag){
@@ -72,7 +76,8 @@ static void sequenceEngine(){
             //this may cause a disaster of unimaginable magnitude, because it's time dependent and we can't imagine how time could cause the disaster
             //check seq num has exceeded current sequences, if so; null.
             //the current and next sequences are made equal
-            currentSequence = nextSequence;
+            currentID = nextID;
+            currentSequence = getNextSequence();
             //move to the idle state, where it will remain there deadlocked, until sequenceSelector, changes the next sequence.
             currentState = IDLE_STATE;
         default:break;
@@ -116,17 +121,25 @@ static void sequenceEngine(){
     }
 
 }
-
-static void sequenceSelector(SEQUENCE_ID ID){
-    //we need to point to the sequence instead of taking a copy of it.
-    nextID = ID;
-    switch(ID){
+static SEQUENCE getNextSequence(){
+    switch(nextID){
         case NONE_SEQUENCE : break;
         case ROTATE_LEFT_SEQUENCE : break;
-        case ROTATE_RIGHT_SEQUENCE : nextSequence = rotateRight; break;
+        case ROTATE_RIGHT_SEQUENCE : return rotateRight; break;
         case FORWARD_SEQUENCE : break;
         default:break;
     }
+}
+static void sequenceSelector(SEQUENCE_ID ID){
+    //we need to point to the sequence instead of taking a copy of it.
+    nextID = ID;
+    // switch(ID){
+    //     case NONE_SEQUENCE : break;
+    //     case ROTATE_LEFT_SEQUENCE : break;
+    //     case ROTATE_RIGHT_SEQUENCE : nextSequence = rotateRight; break;
+    //     case FORWARD_SEQUENCE : break;
+    //     default:break;
+    // }
     if(currentSequenceFlag){
         char* currentSequenceString;
         switch(ID){

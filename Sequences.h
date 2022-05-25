@@ -10,7 +10,6 @@ typedef enum{
     ROTATE_LEFT_SEQUENCE,
     ROTATE_RIGHT_SEQUENCE,
     FORWARD_SEQUENCE
-
 }SEQUENCE_ID;
 
 typedef struct {
@@ -18,11 +17,13 @@ typedef struct {
     unsigned char motionsCount;
     MOTION motions[SUPPORTED_MOTIONS_COUNT];
 }SEQUENCE;
+static SEQUENCE getNextSequence();
 const static SEQUENCE idleSeq = {
     false,
     1,
     {legRaise, legReturn}
 };
+
 const static SEQUENCE rotateRight = {
    false,
    2,

@@ -49,9 +49,10 @@ typedef struct{
     POINT start[6];
     POINT destination[6];
     TRAJECTORY_TYPE trajectory[6];
+    //depreicated variables for memory conservation
     // float motionTime;
-    unsigned char motionSpeed;
-    bool isDone;
+    // unsigned char motionSpeed;
+    // bool isDone;
 }MOTION;
 
 
@@ -63,6 +64,7 @@ static bool arcTrajectory(float arc);
 static bool elipticalTrajectory();
 static void startNextMotion(MOTION* nextMotion);
 static void motionProcess();
+static bool checkMotionCompletion();
 //some defaults point, will need to further expand the point system for motion critical points
 const static POINT initialPoint = {
     FEMUR_COXA_SUM,
@@ -103,38 +105,28 @@ const static POINT legOutstretshed = {
 const static MOTION legRaise = {
     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
     {legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed}, //all legs end at the initial position except leg 1
-    {LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY},
-    10,
-    false
+    {LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY}
 };
 const static MOTION legReturn = {
     {legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed}, //all legs end at the initial position except leg 1
     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
-    {LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY},
-    10,
-    false
+    {LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY}
 };
 const static MOTION debugMotion1 = {
     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
     {halfUP,halfDown,halfUP,halfDown,halfUP,halfDown},
-    {LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY},
-    10,
-    false
+    {LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY}
 };
 const static MOTION debugMotion2 = {
     {halfUP,halfDown,halfUP,halfDown,halfUP,halfDown},
     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
-    {ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY},
-    10,
-    false
+    {ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY}
 };
 //prevents hexapod from moving
 const static MOTION bufferMotion = {
     {0}, //all legs start at the initial position
     {0}, //all legs end at the initial position except leg 1
-    {NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY},
-    10,
-    false
+    {NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY,NONE_TRAJECTORY}
 };
 //default configs for each link type, will be later removed
 #define DEFAULT_COXA(pin) {90,90, COXA_MIN, COXA_MAX,pin}
