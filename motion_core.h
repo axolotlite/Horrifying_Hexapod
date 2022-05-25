@@ -20,8 +20,8 @@
 // #define INITIAL_X (unsigned char) (COXA_LENGTH + FEMUR_LENGTH * cos( 0.5 * 90))
 // #define INITIAL_Y (unsigned char) (TIBIA_LENGTH - FEMUR_LENGTH * sin( 0.5 * 90))
 // #define INITIAL_Z 0
-#define INITIAL_X (unsigned char) 53
-#define INITIAL_Y (unsigned char) -51
+#define INITIAL_X (unsigned char) 54
+#define INITIAL_Y (unsigned char) -52
 #define INITIAL_Z (unsigned char) 0
 
 // min and max angles of each leg
@@ -92,6 +92,16 @@ const static POINT neoInitial = {
     -52,
     0
 };
+const static POINT forwardPoint = {
+    33,
+    -TIBIA_LENGTH,
+    -57
+};
+const static POINT backwardPoint = {
+    33,
+    -TIBIA_LENGTH,
+    57
+};
 const static POINT idlePoint = {
     FEMUR_COXA_SUM,
     -TIBIA_LENGTH,
@@ -146,6 +156,21 @@ const static MOTION debugMotion2 = {
     {halfUP,halfDown,halfUP,halfDown,halfUP,halfDown},
     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
     {ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY}
+};
+const static MOTION moveForward0 = {
+     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
+     {forwardPoint,backwardPoint,forwardPoint,backwardPoint,forwardPoint,backwardPoint},
+     {ARC_TRAJECTORY,LINEAR_TRAJECTORY,ARC_TRAJECTORY,LINEAR_TRAJECTORY,ARC_TRAJECTORY,LINEAR_TRAJECTORY}
+};
+const static MOTION moveForward1 = {
+    {forwardPoint,backwardPoint,forwardPoint,backwardPoint,forwardPoint,backwardPoint},
+    {backwardPoint,forwardPoint,backwardPoint,forwardPoint,backwardPoint,forwardPoint},
+    {LINEAR_TRAJECTORY,ARC_TRAJECTORY,LINEAR_TRAJECTORY,ARC_TRAJECTORY,LINEAR_TRAJECTORY,ARC_TRAJECTORY}
+};
+const static MOTION moveForward2 = {
+     {backwardPoint,forwardPoint,backwardPoint,forwardPoint,backwardPoint,forwardPoint},
+     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
+     {ARC_TRAJECTORY,LINEAR_TRAJECTORY,ARC_TRAJECTORY,LINEAR_TRAJECTORY,ARC_TRAJECTORY,LINEAR_TRAJECTORY}
 };
 //prevents hexapod from moving
 const static MOTION bufferMotion = {

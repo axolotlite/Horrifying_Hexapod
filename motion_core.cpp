@@ -28,7 +28,7 @@ typedef struct {
 
 static MOTION currentMotion = {0};
 static unsigned char currentLeg = 0;
-static bool motionComplete = false;
+static bool motionComplete = true;
 //can be modified later
 static float motionPercentage = 0;
 static unsigned char increment = 1;
@@ -284,6 +284,7 @@ static bool checkMotionCompletion(){
 }
 static void startNextMotion(MOTION* nextMotion){
     currentMotion = *nextMotion;
+    motionComplete = false;
 //    Serial.println(nextMotion->start[0].y);
 //    Serial.println("Current motion y: ");
 //    Serial.println(currentMotion.start[0].y);

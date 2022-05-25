@@ -67,8 +67,9 @@ static void sequenceEngine(){
         case CHANGE_MOTION_STATE:
             //may cause a bug where an entire motion is skipped
             motionCount++;
-            if(motionCount >= currentSequence.motionsCount)
+            if(motionCount > currentSequence.motionsCount){
                 currentState = CHANGE_SEQUENCE_STATE;
+            }
             else 
                 currentState = MOVE_STATE;
             break;
@@ -92,7 +93,7 @@ static void sequenceEngine(){
             case CHANGE_SEQUENCE_STATE: currentStateString = "CHANGE_SEQUENCE_STATE";break;
             default: currentStateString = "DEFAULT_STATE";break;
         }
-        Serial.println("Current state: ");Serial.println(currentStateString);
+        Serial.print("Current state: ");Serial.println(currentStateString);
     }
     if(stateTransitionFlag){
         if(transitions[transitionCount] != currentState)
@@ -109,7 +110,7 @@ static void sequenceEngine(){
                     case CHANGE_SEQUENCE_STATE: currentStateString = "CHANGE_SEQUENCE_STATE";break;
                     default: currentStateString = "DEFAULT_STATE";break;
                 }
-                Serial.print("Current state->");Serial.print(currentStateString);
+                Serial.print("->");Serial.print(currentStateString);
             }
             Serial.println();
             return;
@@ -122,6 +123,9 @@ static void sequenceEngine(){
 
 }
 static SEQUENCE getNextSequence(){
+    if(getNextSequenceFlag){
+        Serial.println("getting next sequence");
+    }
     switch(nextID){
         case NONE_SEQUENCE : break;
         case ROTATE_LEFT_SEQUENCE : break;
@@ -149,6 +153,6 @@ static void sequenceSelector(SEQUENCE_ID ID){
             case FORWARD_SEQUENCE : currentSequenceString = "FORWARD_SEQUENCE"; break;
             default: currentSequenceString = "DEFAULT_STATE";break;
         }
-        Serial.println("Current Sequence: ");Serial.println(currentSequenceString);
+        Serial.print("Current Sequence: ");Serial.println(currentSequenceString);
     }
 }
