@@ -3,6 +3,7 @@
 #include <Servo.h>
 #include "debug.h"
 #include "motion_core.h"
+
 #include "servo_driver_configs.h"
 //  #include "Leg.cpp"
 
@@ -316,7 +317,9 @@ static void motionProcess(){
         updateAngles();
         if(motionPercentage >= 1){
                 Serial.print("percentage = ");Serial.println(motionPercentage);
+                //remove the boolean from the motion and make it a local variable
                 currentMotion.isDone = true;
+
                 motionPercentage = 0;
             }
     }

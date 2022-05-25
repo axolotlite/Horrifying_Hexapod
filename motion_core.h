@@ -26,6 +26,7 @@
 // #define maxZUP (short int )round(FEMUR_COXA_SUM * RAD_TO_DEG(tanf(90 - COXA_MIN)))
 #define maxZUP (short int) 142
 #define maxZDown -maxZUP
+#define SAFETY_OFFSET 10
 
 
 //the 3d point
@@ -52,6 +53,7 @@ typedef struct{
     unsigned char motionSpeed;
     bool isDone;
 }MOTION;
+
 
 static void motionCoreInit();
 static void updateAngles();
@@ -80,7 +82,7 @@ const static POINT maxUp = {
 const static POINT halfUP = {
     FEMUR_COXA_SUM,
     -TIBIA_LENGTH,
-    maxZUP/2 + 5
+    30
 };
 const static POINT maxDown = {
     FEMUR_COXA_SUM,
@@ -90,7 +92,7 @@ const static POINT maxDown = {
 const static POINT halfDown = {
     FEMUR_COXA_SUM,
     -TIBIA_LENGTH,
-    -maxZDown/2 - 5
+    -30
 };
 const static POINT legOutstretshed = {
     COXA_LENGTH + FEMUR_LENGTH + TIBIA_LENGTH,
@@ -105,10 +107,24 @@ const static MOTION legRaise = {
     10,
     false
 };
-const static MOTION debugMotion = {
+const static MOTION legReturn = {
+    {legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed,legOutstretshed}, //all legs end at the initial position except leg 1
     {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
-    {halfUP,halfDown,halfUP,halfDown,halfUP,halfDown,},
+    {LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY,LINEAR_TRAJECTORY},
+    10,
+    false
+};
+const static MOTION debugMotion1 = {
+    {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
+    {halfUP,halfDown,halfUP,halfDown,halfUP,halfDown},
     {LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY},
+    10,
+    false
+};
+const static MOTION debugMotion2 = {
+    {halfUP,halfDown,halfUP,halfDown,halfUP,halfDown},
+    {initialPoint,initialPoint,initialPoint,initialPoint,initialPoint,initialPoint}, //all legs start at the initial position
+    {ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY,ARC_TRAJECTORY,LINEAR_ARC_TRAJECTORY},
     10,
     false
 };
@@ -120,7 +136,6 @@ const static MOTION bufferMotion = {
     10,
     false
 };
-
 //default configs for each link type, will be later removed
 #define DEFAULT_COXA(pin) {90,90, COXA_MIN, COXA_MAX,pin}
 #define DEFAULT_FEMUR(pin) {90,90, 0, 180,pin}
