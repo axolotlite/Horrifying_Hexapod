@@ -32,7 +32,8 @@ static bool motionComplete = true;
 //can be modified later
 static float motionPercentage = 0;
 static unsigned char increment = 1;
-
+static long int currTime=0;
+static long int prevTime=0;//hello there you're finally awake
 //The servo driver
 static Adafruit_PWMServoDriver PWM_Driver = Adafruit_PWMServoDriver(0x40);
 
@@ -83,7 +84,16 @@ static void motionCoreInit(){
     // delay(10);
     // leg6.attach();
 }
-
+static void resetAngles(){
+    for(unsigned char i = 0; i<6;i++){
+            legs[i].coxa.angle = legs[i].coxa.zeroRotate;
+            legs[i].femur.angle = legs[i].femur.zeroRotate;
+            legs[i].tibia.angle = legs[i].tibia.zeroRotate;
+    }
+}
+// static void moveForward(){
+    
+// }
 static void updateAngles(){
     
     PWM_Driver.writeMicroseconds(legs[0].coxa.pin,PWM_2_DEGREE(legs[0].coxa.angle));
@@ -123,6 +133,7 @@ static bool legInverseKinematics(){
     float coxa_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg].coxa.zeroRotate);
     float femur_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg].femur.zeroRotate);
     float tibia_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg].tibia.zeroRotate);
+    float coxa_angle = legs[currentLeg].coxa.angle;
     float x1 = legs[currentLeg].point.x * cosf(coxa_zero_rotate_deg) + legs[currentLeg].point.z * sinf(coxa_zero_rotate_deg);
     float y1 = legs[currentLeg].point.y;
     float z1 = -legs[currentLeg].point.x * sinf(coxa_zero_rotate_deg) + legs[currentLeg].point.z * cosf(coxa_zero_rotate_deg);
@@ -137,7 +148,7 @@ static bool legInverseKinematics(){
     float new_coxa_angle_rad = atan2f(z1,x1);
 //    Serial.print("new coxa angle");
 //    Serial.println(new_coxa_angle_rad);
-    legs[currentLeg].coxa.angle = RAD_TO_DEG(new_coxa_angle_rad);
+    coxa_angle = RAD_TO_DEG(new_coxa_angle_rad);
     x1 = x1 * cosf(new_coxa_angle_rad) + z1 * sinf(new_coxa_angle_rad);
     // std::cout << "x1 = " << x1 << '\n';
     x1 = x1 - COXA_LENGTH;//legs[currentLeg].coxa.length;
@@ -160,9 +171,9 @@ static bool legInverseKinematics(){
     //****IMPORTANT NOTE****//
     //not subtracting the tibia zero rotation makes this equation work...
     //TODO actually test that shit
-    legs[currentLeg].tibia.angle = RAD_TO_DEG(gamma); //- legs[currentLeg].tibia.zero_rotate;
+    legs[currentLeg].tibia.angle = RAD_TO_DEG(gamma);// - legs[currentLeg].tibia.zeroRotate;
 
-    legs[currentLeg].coxa.angle =round(fabs(legs[currentLeg].coxa.angle));
+    legs[currentLeg].coxa.angle =round(fabs(coxa_angle));
     legs[currentLeg].femur.angle = round(legs[currentLeg].femur.angle);
     legs[currentLeg].tibia.angle = round(legs[currentLeg].tibia.angle);
     if(legInverseKinematicsSecondDebugFlag){

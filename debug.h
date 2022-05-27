@@ -10,7 +10,7 @@ static bool linearTrajectoryFlag = false;
 static bool arcTrajectoryFlag = false;
 static bool elipticalTrajectoryFlag = false;
 static bool motionProcessFlag = false;
-static bool updateAnglesFlag = true;
+static bool updateAnglesFlag = false;
 
 //sequence engine debug flags
 static bool motionTransitionDelayFlag = false;
