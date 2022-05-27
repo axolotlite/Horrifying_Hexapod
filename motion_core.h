@@ -4,16 +4,16 @@
 // #include "constants.h"
 #define LIMB_COUNT 6
 
-#define COXA_LENGTH (unsigned char) 26
-#define COXA_LENGTH_SQUARED (short int) 676
-#define FEMUR_LENGTH (unsigned char) 40
-#define FEMUR_LENGTH_SQUARED (short int) 1600
+#define COXA_LENGTH (unsigned char) 30
+#define COXA_LENGTH_SQUARED (short int) COXA_LENGTH*COXA_LENGTH
+#define FEMUR_LENGTH (unsigned char) 45
+#define FEMUR_LENGTH_SQUARED (short int) FEMUR_LENGTH*FEMUR_LENGTH
 #define TIBIA_LENGTH (unsigned char) 80
-#define TIBIA_LENGTH_SQUARED (short int) 6400
+#define TIBIA_LENGTH_SQUARED (short int) TIBIA_LENGTH*TIBIA_LENGTH
 
-#define FEMUR_COXA_SUM (unsigned char) 66
-#define FEMUR_TIBIA_SUM (unsigned char) 120
-#define FEMUR_COXA_DIFF (unsigned char) 14
+#define FEMUR_COXA_SUM (unsigned char) (COXA_LENGTH+FEMUR_LENGTH)
+#define FEMUR_TIBIA_SUM (unsigned char) (FEMUR_LENGTH+TIBIA_LENGTH)
+#define FEMUR_COXA_DIFF (unsigned char) (FEMUR_LENGTH-COXA_LENGTH)
 
 #define ZERO_ANGLE 90
 //these are the equations responsible for determining the points of 45 degrees, but it doesn't work. i don't know why and i don't care.
@@ -84,6 +84,8 @@ static void startNextMotion(MOTION* nextMotion);
 static void motionProcess();
 static bool checkMotionCompletion();
 //some defaults point, will need to further expand the point system for motion critical points
+
+//should initialize body at 90 degree angles
 const static POINT initialPoint = {
     FEMUR_COXA_SUM,
     -TIBIA_LENGTH,

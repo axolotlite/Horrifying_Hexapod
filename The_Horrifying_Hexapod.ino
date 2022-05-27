@@ -28,20 +28,20 @@ void loop(){
     if(currentMillis - prevMillis >= 40){
         // sequenceEngine();
         
-        if(checkMotionCompletion()){
+        // if(checkMotionCompletion()){
             
-            switch(count){
-                case 0:startNextMotion(&moveForward0);Serial.println("first motion"); break;
-                case 1:startNextMotion(&moveForward1);Serial.println("second motion"); break;
-                case 2:startNextMotion(&moveForward2);Serial.println("third motion"); break;
-                default:{
-                    Serial.println("resetting motion");
-                    count = -1;
-                }
-            }
-            count++;
+        //     switch(count){
+        //         case 0:startNextMotion(&moveForward0);Serial.println("first motion"); break;
+        //         case 1:startNextMotion(&moveForward1);Serial.println("second motion"); break;
+        //         case 2:startNextMotion(&moveForward2);Serial.println("third motion"); break;
+        //         default:{
+        //             Serial.println("resetting motion");
+        //             count = -1;
+        //         }
+        //     }
+        //     count++;
 
-        }
+        // }
         motionProcess();
         prevMillis = currentMillis;
     }
