@@ -3,7 +3,7 @@
 #define _SEQUENCES_
 #include "motion_core.h"
 
-#define SUPPORTED_MOTIONS_COUNT 5
+#define SUPPORTED_MOTIONS_COUNT 3
 
 typedef enum{
     NONE_SEQUENCE,

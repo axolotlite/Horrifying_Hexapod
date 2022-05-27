@@ -13,9 +13,9 @@ typedef struct{
     float angle;
     //uneeded
     // unsigned char length; //length of the link
-    unsigned char zero_rotate; //starting or default angle of the motor
-    unsigned char min_angle; //maximum angle
-    unsigned char max_angle; //minimum angle
+    unsigned char zeroRotate; //starting or default angle of the motor
+    unsigned char minAngle; //maximum angle
+    unsigned char maxAngle; //minimum angle
     unsigned char pin;
 }LINK;
 
@@ -96,9 +96,9 @@ static void updateAngles(){
 }
 
 static bool legInverseKinematics(){
-    float coxa_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->coxa.zero_rotate);
-    float femur_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->femur.zero_rotate);
-    float tibia_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->tibia.zero_rotate);
+    float coxa_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->coxa.zeroRotate);
+    float femur_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->femur.zeroRotate);
+    float tibia_zero_rotate_deg = DEG_TO_RAD(legs[currentLeg]->tibia.zeroRotate);
     float x1 = legs[currentLeg]->point.x * cosf(coxa_zero_rotate_deg) + legs[currentLeg]->point.z * sinf(coxa_zero_rotate_deg);
     float y1 = legs[currentLeg]->point.y;
     float z1 = -legs[currentLeg]->point.x * sinf(coxa_zero_rotate_deg) + legs[currentLeg]->point.z * cosf(coxa_zero_rotate_deg);
@@ -131,7 +131,7 @@ static bool legInverseKinematics(){
     float alpha = acosf((FEMUR_LENGTH_SQUARED + distance * distance - TIBIA_LENGTH_SQUARED) / (2.0f * FEMUR_LENGTH * distance));
     float gamma = acosf((TIBIA_LENGTH_SQUARED + FEMUR_LENGTH_SQUARED - distance * distance)/(2.0f * FEMUR_LENGTH * TIBIA_LENGTH));
 
-    legs[currentLeg]->femur.angle = legs[currentLeg]->femur.zero_rotate - RAD_TO_DEG(alpha) - RAD_TO_DEG(fi);
+    legs[currentLeg]->femur.angle = legs[currentLeg]->femur.zeroRotate - RAD_TO_DEG(alpha) - RAD_TO_DEG(fi);
 
     //****IMPORTANT NOTE****//
     //not subtracting the tibia zero rotation makes this equation work...
@@ -150,23 +150,23 @@ static bool legInverseKinematics(){
    }
     
     //make sure they don't exceed the maximum nor minimum angle
-    if (legs[currentLeg]->coxa.angle < legs[currentLeg]->coxa.min_angle) {
-        legs[currentLeg]->coxa.angle = legs[currentLeg]->coxa.min_angle;
+    if (legs[currentLeg]->coxa.angle < legs[currentLeg]->coxa.minAngle) {
+        legs[currentLeg]->coxa.angle = legs[currentLeg]->coxa.minAngle;
     }
-    if (legs[currentLeg]->coxa.angle > legs[currentLeg]->coxa.max_angle) {
-        legs[currentLeg]->coxa.angle  = legs[currentLeg]->coxa.max_angle;
+    if (legs[currentLeg]->coxa.angle > legs[currentLeg]->coxa.maxAngle) {
+        legs[currentLeg]->coxa.angle  = legs[currentLeg]->coxa.maxAngle;
     }
-    if (legs[currentLeg]->femur.angle < legs[currentLeg]->femur.min_angle) {
-        legs[currentLeg]->femur.angle = legs[currentLeg]->femur.min_angle;
+    if (legs[currentLeg]->femur.angle < legs[currentLeg]->femur.minAngle) {
+        legs[currentLeg]->femur.angle = legs[currentLeg]->femur.minAngle;
     }
-    if (legs[currentLeg]->femur.angle > legs[currentLeg]->femur.max_angle) {
-        legs[currentLeg]->femur.angle = legs[currentLeg]->femur.max_angle;
+    if (legs[currentLeg]->femur.angle > legs[currentLeg]->femur.maxAngle) {
+        legs[currentLeg]->femur.angle = legs[currentLeg]->femur.maxAngle;
     }
-    if (legs[currentLeg]->tibia.angle < legs[currentLeg]->tibia.min_angle) {
-        legs[currentLeg]->tibia.angle = legs[currentLeg]->tibia.min_angle;
+    if (legs[currentLeg]->tibia.angle < legs[currentLeg]->tibia.minAngle) {
+        legs[currentLeg]->tibia.angle = legs[currentLeg]->tibia.minAngle;
     }
-    if (legs[currentLeg]->tibia.angle > legs[currentLeg]->tibia.max_angle) {
-        legs[currentLeg]->tibia.angle = legs[currentLeg]->tibia.max_angle;
+    if (legs[currentLeg]->tibia.angle > legs[currentLeg]->tibia.maxAngle) {
+        legs[currentLeg]->tibia.angle = legs[currentLeg]->tibia.maxAngle;
     }
 //    Serial.println("angles");
     

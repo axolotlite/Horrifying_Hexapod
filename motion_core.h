@@ -46,13 +46,14 @@
 
 
 //the 3d point
+//diagram done
 typedef struct {
     short int x;
     short int y;
     short int z;
 } POINT;
 
-
+//diagram done
 typedef enum{
     NONE_TRAJECTORY,
     LINEAR_TRAJECTORY,
@@ -60,6 +61,7 @@ typedef enum{
     ARC_TRAJECTORY,
     ELIPTICAL_TRAJECTORY
 }TRAJECTORY_TYPE;
+//diagram done
 //motion information for trajectory calculation
 typedef struct{
     POINT start[6];
