@@ -6,9 +6,12 @@ static unsigned long prevMillis;
 static unsigned long currentMillis;  
 
 static short int count = 0;
+static unsigned char flag1 = 12;
+static unsigned char flag2;
+static unsigned char flag3;
 int offset = 10;
 void setup(){
-
+    pinMode(flag1,INPUT);
     Serial.begin(9600);
     motionCoreInit();
 
@@ -25,7 +28,12 @@ void setup(){
 }
 
 void loop(){
-    moveForward();
+    // moveForward();
+    flag2 = digitalRead(flag1);
+    if(flag2 && checkMotionCompletion())
+        setNextMotion(&legRaise);
+    else if(!flag2 && checkMotionCompletion())
+        setNextMotion(&legReturn)
     if(currentMillis - prevMillis >= 40){
         // sequenceEngine();
         
@@ -44,7 +52,7 @@ void loop(){
 
         // }
         updateAngles();
-        // motionProcess();
+        motionProcess();
         prevMillis = currentMillis;
     }
     currentMillis = millis();
